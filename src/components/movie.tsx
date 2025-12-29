@@ -60,7 +60,7 @@ export function Movie({ movie, found, onSuccess }: Props) {
             {movie.number}
           </div>
         </TooltipTrigger>
-        <TooltipContent>{movie.year}</TooltipContent>
+        <TooltipContent>Année : {movie.year}</TooltipContent>
       </Tooltip>
       {found ? (
         <Input
