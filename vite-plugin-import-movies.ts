@@ -35,18 +35,16 @@ export const importMoviesPlugin = (): Plugin => {
         .trim()
         .split("\n")
         .map((line, index) => {
-          const match = line.match(/^(.+?)\s*\((\d+)\)$/);
+          const match = line.match(/^\((\d+)\) (.+)$/);
 
           if (!match) {
-            throw new Error(
-              `Invalid format in ${id} at line ${index + 1}: "${line}"`
-            );
+            throw new Error(`Invalid format in ${id} at line ${index + 1}`);
           }
 
-          const [, name, year] = match;
+          const [, year, title] = match;
 
           return {
-            name,
+            titles: title.split("/").map((t) => t.trim()),
             number: index + 1,
             year: Number(year),
           };
