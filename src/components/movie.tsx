@@ -1,11 +1,9 @@
 import data from "@/assets/data.movies";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { CheckIcon } from "lucide-react";
 import { isSimilar } from "@/lib/utils";
 
 import clsx from "clsx";
-import { useState } from "react";
 import { toast } from "sonner";
 
 import {
@@ -13,6 +11,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import { useForm } from "react-hook-form";
 
 interface Props {
   movie: (typeof data)[number];
@@ -20,29 +25,30 @@ interface Props {
   onSuccess: (number: number) => void;
 }
 
+interface FormData {
+  value: string;
+}
+
 export function Movie({ movie, found, onSuccess }: Props) {
-  const [error, setError] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isValid },
+  } = useForm<FormData>();
 
   return (
     <form
       className="group/movie flex items-center gap-4"
-      onSubmit={(event) => {
-        event.preventDefault();
-
-        if (found) {
-          return;
-        }
-
-        const formData = new FormData(event.currentTarget);
-        const value = formData.get("value");
-        if (isSimilar(String(value), movie.titles)) {
+      onSubmit={handleSubmit(({ value }) => {
+        if (isSimilar(value, movie.titles)) {
           onSuccess(movie.number);
           toast.success("Correct! Well done.");
         } else {
-          setError(true);
+          setError("value", { type: "manual" });
           toast.error("Incorrect! Try again.");
         }
-      }}
+      })}
     >
       <Tooltip delay={3000} disabled={found}>
         <TooltipTrigger>
@@ -70,19 +76,28 @@ export function Movie({ movie, found, onSuccess }: Props) {
           className="pointer-events-none"
         />
       ) : (
-        <Input
-          key="not-found"
-          name="value"
-          autoComplete="off"
-          aria-invalid={error}
-          onChange={() => {
-            setError(false);
-          }}
-        />
+        <InputGroup>
+          <InputGroupInput
+            autoComplete="off"
+            aria-invalid={!!errors.value}
+            {...register("value", {
+              required: true,
+            })}
+          />
+          <InputGroupAddon align="inline-end" className="pr-3">
+            {isValid && (
+              <InputGroupButton
+                variant="default"
+                className="rounded-full"
+                size="icon-xxs"
+              >
+                <CheckIcon />
+                <span className="sr-only">Send</span>
+              </InputGroupButton>
+            )}
+          </InputGroupAddon>
+        </InputGroup>
       )}
-      <Button variant="outline" disabled={found}>
-        <Check />
-      </Button>
     </form>
   );
 }

@@ -10,7 +10,7 @@ export function App() {
 
   return (
     <>
-      <div className="flex items-center p-8 py-4 sticky top-0 backdrop-blur-lg justify-center">
+      <div className="flex items-center p-8 py-4 sticky top-0 backdrop-blur-lg justify-center z-10">
         <img
           src={titleImage}
           alt="Quel est ce film ?"
