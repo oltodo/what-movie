@@ -2,6 +2,7 @@ import data from "@/assets/data.movies";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
+import { isSimilar } from "@/lib/utils";
 
 import clsx from "clsx";
 import { useState } from "react";
@@ -34,7 +35,7 @@ export function Movie({ movie, found, onSuccess }: Props) {
 
         const formData = new FormData(event.currentTarget);
         const value = formData.get("value");
-        if (movie.titles.includes(String(value).trim())) {
+        if (isSimilar(String(value), movie.titles)) {
           onSuccess(movie.number);
           toast.success("Correct! Well done.");
         } else {
